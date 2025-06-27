@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curriculum Vitae - Sholehudin</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Konfigurasi Tailwind CSS untuk mengaktifkan Dark Mode via 'class' -->
+    <script>
+      // Pastikan konfigurasi ini dijalankan setelah script tailwind utama dimuat
+      tailwind.config = {
+        darkMode: 'class',
+      }
+    </script>
+    
+    <!-- html2pdf.js for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        /* Menggunakan font Inter sebagai default */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style untuk memastikan tombol kontrol tidak ikut tercetak di PDF */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .ai-feature {
+                display: none !important;
+            }
+            #pdf-footer.show-footer {
+                display: block !important;
+                position: fixed;
+                bottom: 1cm;
+                left: 0;
+                right: 0;
+                text-align: center;
+                font-size: 10px;
+                color: #888;
+            }
+        }
+        .print-area {
+            padding: 2rem;
+        }
+        .loader {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #3b82f6; /* Blue */
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-gray-900 text-slate-800 dark:text-slate-200 transition-colors duration-500">
+
+    <!-- Background Gradient -->
+    <div class="fixed top-0 left-0 w-full h-full bg-gradient-to-br from-sky-200 via-indigo-200 to-purple-300 dark:from-sky-900 dark:via-indigo-900 dark:to-purple-950 -z-10 transition-all duration-500"></div>
+
+    <!-- Control Buttons -->
+    <div class="no-print fixed top-4 right-4 z-50 flex items-center space-x-2 md:space-x-3">
+        <button id="theme-toggle" class="p-2 rounded-full bg-white/50 dark:bg-black/50 backdrop-blur-sm text-yellow-500 dark:text-sky-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all">
+            <svg id="theme-icon-light" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+            <svg id="theme-icon-dark" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        </button>
+        <button id="translate-btn" class="p-2 md:px-4 md:py-2 rounded-full bg-white/50 dark:bg-black/50 backdrop-blur-sm font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="md:hidden"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
+            <span id="translate-btn-text" class="hidden md:inline ml-2">Translate to English</span>
+        </button>
+        <button id="cover-letter-btn" class="ai-feature p-2 md:px-4 md:py-2 rounded-full bg-green-500 hover:bg-green-600 text-white font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all flex items-center">
+            ✨
+            <span id="btn-cover-letter" class="hidden md:inline ml-2">Buat Surat Lamaran</span>
+        </button>
+        <button id="pdf-btn" class="p-2 md:px-4 md:py-2 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all flex items-center">
+             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="lucide lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            <span id="btn-generate-pdf" class="hidden md:inline ml-2">Unduh PDF</span>
+        </button>
+    </div>
+
+    <!-- CV Container -->
+    <div id="cv-container" class="w-full min-h-screen flex items-center justify-center p-4">
+        <div class="print-area max-w-4xl w-full mx-auto bg-white/70 dark:bg-black/50 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden transition-colors duration-500">
+            <div class="p-6 sm:p-8 md:p-12">
+                <!-- Header Section -->
+                <header class="flex flex-col items-center text-center md:flex-row md:text-left md:items-start space-y-4 md:space-y-0 md:space-x-8 mb-10">
+                    <img src="picofme.png" alt="Foto Profil" class="w-28 h-28 md:w-32 md:h-32 rounded-full object-cover border-4 border-white dark:border-slate-600 shadow-md flex-shrink-0">
+                    <div class="w-full">
+                        <h1 id="nama" class="text-3xl sm:text-4xl md:text-5xl font-bold text-indigo-700 dark:text-indigo-400">Sholehudin</h1>
+                        <p id="profesi" class="text-lg sm:text-xl md:text-2xl mt-1 text-slate-600 dark:text-slate-300">Tenaga Kependidikan & Pengembangan Web</p>
+                        <div class="mt-4 text-sm text-slate-500 dark:text-slate-400 space-y-1">
+                            <p id="ttl"><strong>Email:</strong> sholehudin.emailku@ga</p>
+                            <p id="lokasi"><strong>Lokasi:</strong> Bandar Lampung, Indonesia</p>
+                        </div>
+                    </div>
+                </header>
+                
+                <!-- Main Content -->
+                <main class="space-y-10">
+                    <!-- Education Section -->
+                    <section>
+                        <h2 id="judul-pendidikan" class="text-xl sm:text-2xl font-bold border-b-2 border-indigo-300 dark:border-indigo-700 pb-2 mb-4">Pendidikan</h2>
+                        <div id="pendidikan-terakhir"></div>
+                    </section>
+                    
+                    <!-- Languages Section -->
+                    <section>
+                        <h2 id="judul-bahasa" class="text-xl sm:text-2xl font-bold border-b-2 border-indigo-300 dark:border-indigo-700 pb-2 mb-4">Bahasa</h2>
+                        <div id="list-bahasa" class="space-y-2"></div>
+                    </section>
+                    
+                    <!-- Skills Section -->
+                    <section>
+                        <h2 id="judul-kemampuan" class="text-xl sm:text-2xl font-bold border-b-2 border-indigo-300 dark:border-indigo-700 pb-2 mb-4">Kemampuan</h2>
+                        <div id="list-kemampuan" class="flex flex-wrap gap-2"></div>
+                    </section>
+
+                    <!-- Training Section -->
+                    <section>
+                        <h2 id="judul-pelatihan" class="text-xl sm:text-2xl font-bold border-b-2 border-indigo-300 dark:border-indigo-700 pb-2 mb-4">Pelatihan & Sertifikasi</h2>
+                        <div id="list-pelatihan"></div>
+                    </section>
+
+                    <!-- Work History Section -->
+                    <section>
+                        <h2 id="judul-riwayat-kerja" class="text-xl sm:text-2xl font-bold border-b-2 border-indigo-300 dark:border-indigo-700 pb-2 mb-4">Riwayat Pekerjaan</h2>
+                        <div id="list-riwayat-kerja" class="space-y-6"></div>
+                    </section>
+                </main>
+
+                <div id="pdf-footer" class="hidden"><p id="pdf-footer-content"></p></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cover Letter Modal -->
+    <div id="modal-backdrop" class="no-print fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div id="modal-content" class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <header class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                <h3 id="modal-title" class="text-lg font-bold text-gray-800 dark:text-white">✨ Generator Surat Lamaran</h3>
+                <button id="modal-close-btn" class="text-gray-400 hover:text-gray-600 dark:hover:text-white">&times;</button>
+            </header>
+            <main class="p-6 space-y-4 overflow-y-auto">
+                <div>
+                    <label id="modal-company-label" for="company-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Perusahaan</label>
+                    <input type="text" id="company-name" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 focus:ring-2 focus:ring-green-500">
+                </div>
+                 <div>
+                    <label id="modal-position-label" for="position-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Posisi yang Dilamar</label>
+                    <input type="text" id="position-name" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 focus:ring-2 focus:ring-green-500">
+                </div>
+                <button id="generate-letter-btn" class="w-full px-4 py-2 rounded-full bg-green-500 hover:bg-green-600 text-white font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all flex items-center justify-center space-x-2">
+                    <span id="generate-letter-btn-text">Buat Surat Lamaran</span>
+                    <div id="letter-loader" class="loader w-4 h-4 hidden"></div>
+                </button>
+                <div id="letter-output-container" class="hidden">
+                    <textarea id="letter-output" rows="10" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-900 whitespace-pre-wrap" readonly></textarea>
+                    <button id="copy-letter-btn" class="mt-2 px-4 py-2 rounded-full bg-blue-500 hover:bg-blue-600 text-white font-semibold text-sm">
+                        <span id="copy-letter-btn-text">Salin Teks</span>
+                    </button>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <script>
+        // --- DATA TRANSLATION ---
+        const translations = {
+            id: {
+                nama: "Sholehudin",
+                profesi: "Tenaga Kependidikan & Pengembang Web",
+                ttl: "<strong>Email:</strong> sholehudin.emailku@gmail.com",
+                lokasi: "<strong>Lokasi:</strong> Bandar Lampung, Indonesia",
+                'judul-pendidikan': "Pendidikan",
+                'pendidikan-terakhir': `<div class="flex items-center justify-between"><span>STMIK AMIKOM Purwokerto</span><span class="text-sm text-slate-500 dark:text-slate-400">S1 - Teknik Informatika | 2014 - 2018</span></div><div class="flex items-center justify-between">`,
+                'judul-bahasa': "Bahasa",
+                'list-bahasa': `<div class="flex items-center justify-between"><span>Indonesia</span><span class="text-sm text-slate-500 dark:text-slate-400">Lancar</span></div><div class="flex items-center justify-between"><span>Inggris</span><span class="text-sm text-slate-500 dark:text-slate-400">Dasar</span></div>`,
+                'judul-kemampuan': "Kemampuan",
+                'list-kemampuan': `<span class="skill-item">Web Development</span><span class="skill-item">Microsoft Office</span><span class="skill-item">Desain Kreatif</span><span class="skill-item">Komunikatif</span><span class="skill-item">Kolaboratif</span>`,
+                'judul-pelatihan': "Pelatihan & Sertifikasi",
+                'list-pelatihan': `<ul class="list-disc list-inside space-y-2"><li><span class="font-semibold">Dicoding: Dasar Pemrograman Web</span> - 03 Mei 2020</li><li><span class="font-semibold">Digitalent: Programming HTML, CSS, Javascript</span> - 31 Mei 2020</li><li><span class="font-semibold">Dicoding: Fundamental Frontend Web Development</span> - 29 Mei 2020</li><li><span class="font-semibold">Dicoding: Progressive Web App (PWA)</span> - 16 Agustus 2020</li><li><span class="font-semibold">Web Development Expert</span> - 16 Juli 2021</li></ul>`,
+                'judul-riwayat-kerja': "Riwayat Pekerjaan",
+                'list-riwayat-kerja': `<div><h3 class="text-lg font-semibold">Teknisi Komputer dan Jaringan</h3><p class="text-slate-600 dark:text-slate-400">SPEED COMPUTER | Okt 2013 - Sept 1013</p></div><div><h3 class="text-lg font-semibold">Entry Data</h3><p class="text-slate-600 dark:text-slate-400">BKKN Purwokerto | Mar 2015 - Mei 2015</p></div><div><h3 class="text-lg font-semibold">Asisten Laboratorium</h3><p class="text-slate-600 dark:text-slate-400">Forum Asisten AMIKOM Purwokerto | Jul 2015 - Jul 2017</p></div><div><h3 class="text-lg font-semibold">Tenaga Kependidikan</h3><p class="text-slate-600 dark:text-slate-400">SMP Negeri 7 Bandar Lampung | Okt 2018 - Sekarang</p></div>`,
+                'translate-btn-text': "Translate to English",
+                'btn-generate-pdf': "Unduh PDF",
+                'pdf-footer-content': "Dokumen ini dibuat secara otomatis. | Sholehudin",
+                'btn-cover-letter': 'Buat Surat Lamaran',
+                'modal-title': '✨ Generator Surat Lamaran',
+                'modal-company-label': 'Nama Perusahaan',
+                'modal-position-label': 'Posisi yang Dilamar',
+                'generate-letter-btn-text': 'Buat Surat Lamaran',
+                'copy-letter-btn-text': 'Salin Teks',
+                'copy-success-text': 'Berhasil Disalin!',
+            },
+            en: {
+                nama: "Sholehudin",
+                profesi: "Education Staff & Web Developer",
+                ttl: "<strong>Email:</strong> sholehudin.emailku@gmail.com",
+                lokasi: "<strong>Lokasi:</strong> Bandar Lampung, Indonesia",
+                'judul-pendidikan': "Education",
+                'pendidikan-terakhir': `<div class="flex items-center justify-between"><span>STMIK AMIKOM Purwokerto</span><span class="text-sm text-slate-500 dark:text-slate-400">Bachelor of Information Technology | 2014 - 2018</span></div><div class="flex items-center justify-between">`,
+                'judul-bahasa': "Languages",
+                'list-bahasa': `<div class="flex items-center justify-between"><span>Indonesian</span><span class="text-sm text-slate-500 dark:text-slate-400">Fluent</span></div><div class="flex items-center justify-between"><span>English</span><span class="text-sm text-slate-500 dark:text-slate-400">Elementary</span></div>`,
+                'judul-kemampuan': "Skills",
+                'list-kemampuan': `<span class="skill-item">Web Development</span><span class="skill-item">Microsoft Office</span><span class="skill-item">Creative Design</span><span class="skill-item">Communicative</span><span class="skill-item">Collaborative</span>`,
+                'judul-pelatihan': "Training & Certifications",
+                'list-pelatihan': `<ul class="list-disc list-inside space-y-2"><li><span class="font-semibold">Dicoding: Dasar Pemrograman Web</span> - 03 May 2020</li><li><span class="font-semibold">Digitalent: Programming HTML, CSS, Javascript</span> - 31 May 2020</li><li><span class="font-semibold">Dicoding: Fundamental Frontend Web Development</span> - 29 May 2020</li><li><span class="font-semibold">Dicoding: Progressive Web App (PWA)</span> - 16 Augustus 2020</li><li><span class="font-semibold">Web Development Expert</span> - 16 July 2021</li></ul>`,
+                'judul-riwayat-kerja': "Work History",
+                'list-riwayat-kerja': `<div><h3 class="text-lg font-semibold">Computer and Network Technician</h3><p class="text-slate-600 dark:text-slate-400">SPEED COMPUTER | Okt 2013 - Sept 1013</p></div><div><h3 class="text-lg font-semibold">Entry Data</h3><p class="text-slate-600 dark:text-slate-400">BKKN Purwokerto | Mar 2015 - May 2015</p></div><div><h3 class="text-lg font-semibold">Laboratory Assistant</h3><p class="text-slate-600 dark:text-slate-400">Forum Assistant AMIKOM Purwokerto | Jul 2015 - Jul 2017</p></div><div><h3 class="text-lg font-semibold">Staff</h3><p class="text-slate-600 dark:text-slate-400">SMP Negeri 7 Bandar Lampung | Okt 2018 - Present</p></div>`,
+                'translate-btn-text': "Translate to Indonesian",
+                'btn-generate-pdf': "Download PDF",
+                'pdf-footer-content': "This document was generated automatically. | Sholehudin",
+                'btn-cover-letter': 'Create Cover Letter',
+                'modal-title': '✨ Cover Letter Generator',
+                'modal-company-label': 'Company Name',
+                'modal-position-label': 'Position Applied For',
+                'generate-letter-btn-text': 'Create Cover Letter',
+                'copy-letter-btn-text': 'Copy Text',
+                'copy-success-text': 'Copied!',
+            }
+        };
+
+        // --- DOM ELEMENTS ---
+        const htmlEl = document.documentElement;
+        let currentLanguage = 'id';
+        const apiKey = ""; // API key is handled by the environment
+
+        // --- GEMINI API CALL FUNCTION ---
+        async function callGemini(prompt) {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ role: "user", parts: [{ text: prompt }] }]
+            };
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 && result.candidates[0].content.parts.length > 0) {
+                    return result.candidates[0].content.parts[0].text;
+                } else {
+                    return "Maaf, gagal menghasilkan teks. Coba lagi.";
+                }
+            } catch (error) {
+                console.error("Error calling Gemini API:", error);
+                return `Error: ${error.message}. Periksa koneksi atau coba lagi nanti.`;
+            }
+        }
+
+        // --- HELPER TO GET CV DATA ---
+        function getCvDataAsText() {
+            const sections = {
+                Pendidikan: document.getElementById('pendidikan-terakhir').innerText,
+                Bahasa: document.getElementById('list-bahasa').innerText,
+                Kemampuan: document.getElementById('list-kemampuan').innerText,
+                Pelatihan: document.getElementById('list-pelatihan').innerText,
+                Pekerjaan: document.getElementById('list-riwayat-kerja').innerText,
+            };
+            
+            let cvText = `Nama: ${document.getElementById('nama').innerText}\nProfesi: ${document.getElementById('profesi').innerText}\n`;
+            for (const [key, value] of Object.entries(sections)) {
+                cvText += `\n--- ${key} ---\n${value}\n`;
+            }
+            return cvText;
+        }
+
+
+        // --- UI & FEATURE LOGIC ---
+        document.addEventListener('DOMContentLoaded', () => {
+            setLanguage('id'); 
+            
+            // Theme toggle
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            themeToggleBtn.addEventListener('click', () => {
+                htmlEl.classList.toggle('dark');
+                document.getElementById('theme-icon-light').classList.toggle('hidden');
+                document.getElementById('theme-icon-dark').classList.toggle('hidden');
+            });
+
+            // Translation toggle
+            const translateBtn = document.getElementById('translate-btn');
+            translateBtn.addEventListener('click', () => {
+                 currentLanguage = currentLanguage === 'id' ? 'en' : 'id';
+                 setLanguage(currentLanguage);
+            });
+
+            // PDF generation
+            const pdfBtn = document.getElementById('pdf-btn');
+            pdfBtn.addEventListener('click', generatePdf);
+            
+            // Cover Letter Modal
+            const coverLetterBtn = document.getElementById('cover-letter-btn');
+            const modalBackdrop = document.getElementById('modal-backdrop');
+            const modalCloseBtn = document.getElementById('modal-close-btn');
+            const generateLetterBtn = document.getElementById('generate-letter-btn');
+            const copyLetterBtn = document.getElementById('copy-letter-btn');
+
+            coverLetterBtn.addEventListener('click', () => modalBackdrop.classList.remove('hidden'));
+            modalCloseBtn.addEventListener('click', () => modalBackdrop.classList.add('hidden'));
+            modalBackdrop.addEventListener('click', (e) => {
+                if(e.target === modalBackdrop) modalBackdrop.classList.add('hidden');
+            });
+            generateLetterBtn.addEventListener('click', handleGenerateCoverLetter);
+            copyLetterBtn.addEventListener('click', handleCopyText);
+        });
+        
+        function setLanguage(lang) {
+            // Reapply skill styles after innerHTML is replaced
+            const applySkillStyles = () => {
+                const skillItems = document.querySelectorAll('.skill-item');
+                skillItems.forEach(item => {
+                    item.className = 'skill-item bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200 text-sm font-medium px-3 py-1 rounded-full';
+                });
+            };
+
+            for (const key in translations[lang]) {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.innerHTML = translations[lang][key];
+                }
+            }
+            
+            applySkillStyles();
+            currentLanguage = lang;
+        }
+
+        async function handleGenerateCoverLetter() {
+            const company = document.getElementById('company-name').value;
+            const position = document.getElementById('position-name').value;
+            if (!company || !position) {
+                alert("Silakan isi Nama Perusahaan dan Posisi yang Dilamar.");
+                return;
+            }
+            
+            const letterLoader = document.getElementById('letter-loader');
+            const generateBtnText = document.getElementById('generate-letter-btn-text');
+            const generateBtn = document.getElementById('generate-letter-btn');
+            const outputContainer = document.getElementById('letter-output-container');
+            const outputTextarea = document.getElementById('letter-output');
+            
+            letterLoader.classList.remove('hidden');
+            generateBtnText.classList.add('hidden');
+            generateBtn.disabled = true;
+            outputContainer.classList.add('hidden');
+
+            const cvData = getCvDataAsText();
+            const prompt = `Anda adalah seorang asisten pencari kerja. Berdasarkan data CV ini, buatkan sebuah draf surat lamaran kerja yang profesional, ringkas, dan persuasif.\n\nCV Data:\n${cvData}\n\nTarget:\n- Nama Perusahaan: ${company}\n- Posisi yang Dilamar: ${position}\n\nInstruksi:\n- Gunakan bahasa ${currentLanguage === 'id' ? 'Indonesia' : 'Inggris'} yang formal dan profesional.\n- Sapa manajer perekrutan (jika tidak tahu, gunakan "Yth. Bapak/Ibu Manajer Perekrutan").\n- Paragraf pertama: Sebutkan posisi yang dilamar dan di mana Anda melihat informasinya (asumsikan dari situs web perusahaan).\n- Paragraf kedua dan ketiga: Sorot 2-3 kualifikasi atau pengalaman paling relevan dari CV yang cocok dengan posisi tersebut. Kaitkan langsung keahlian dengan kebutuhan perusahaan.\n- Paragraf penutup: Ucapkan terima kasih dan nyatakan antusiasme Anda untuk diskusi lebih lanjut.\n- Akhiri dengan "Hormat saya," diikuti nama lengkap dari CV.`;
+
+            const result = await callGemini(prompt);
+
+            outputTextarea.value = result;
+            outputContainer.classList.remove('hidden');
+            letterLoader.classList.add('hidden');
+            generateBtnText.classList.remove('hidden');
+            generateBtn.disabled = false;
+        }
+
+        function handleCopyText() {
+            const textarea = document.getElementById('letter-output');
+            textarea.select();
+            document.execCommand('copy');
+            
+            const copyBtn = document.getElementById('copy-letter-btn-text');
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = translations[currentLanguage]['copy-success-text'];
+            setTimeout(() => {
+                copyBtn.textContent = originalText;
+            }, 2000);
+        }
+
+        function generatePdf() {
+            const controlButtons = document.querySelector('.no-print');
+            const elementToPrint = document.querySelector('.print-area');
+            const footer = document.getElementById('pdf-footer');
+            
+            controlButtons.style.display = 'none';
+
+            const a4PageHeightInPx = 1050; 
+            if (elementToPrint.scrollHeight > a4PageHeightInPx) {
+                footer.classList.add('show-footer');
+            }
+
+            const name = translations[currentLanguage].nama;
+            const options = {
+                margin: [1, 0, 1.5, 0],
+                filename: `CV_${name.replace(' ', '_')}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'cm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().from(elementToPrint).set(options).save().finally(() => {
+                controlButtons.style.display = 'flex';
+                footer.classList.remove('show-footer');
+            });
+        }
+    </script>
+</body>
+</html>
